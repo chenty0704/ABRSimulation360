@@ -1,0 +1,11 @@
+{
+    "name": "abr-simulation-360",
+    "version": "1.0",
+    "description": "A research platform for 360° adaptive bitrate streaming",
+    "homepage": "https://github.com/chenty0704/ABRSimulation360",
+    "dependencies": [
+        {"name": "library-link-utilities"},
+        {"name": "system"}
+    ],
+    "builtin-baseline": "a8f9244fbcb04d6059ba825d843b34d29a1a8c39"
+}
