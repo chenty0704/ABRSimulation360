@@ -4,6 +4,7 @@
     "description": "A research platform for 360° adaptive bitrate streaming",
     "homepage": "https://github.com/chenty0704/ABRSimulation360",
     "dependencies": [
+        {"name": "directxtk12", "default-features": false},
         {"name": "library-link-utilities"},
         {"name": "system"}
     ],

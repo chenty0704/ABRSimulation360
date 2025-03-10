@@ -29,10 +29,25 @@ export struct SphericalPosition {
     bool operator!=(const SphericalPosition &) const = default;
 };
 
+/// Represents the configuration for a viewport.
+export struct ViewportConfig {
+    double FoVDegrees = 60.; ///< The vertical field of view in degrees.
+    double AspectRatio = 16 / 9.; ///< The aspect ratio between viewport width and height.
+};
+
+export {
+    DESCRIBE_STRUCT(ViewportConfig, (), (
+                        FoVDegrees,
+                        AspectRatio
+                    ))
+}
+
 /// Represents the configuration for a 360° adaptive bitrate streaming session.
 export struct StreamingConfig {
     double SegmentSeconds; ///< The segment duration in seconds.
     vector<double> BitratesMbps; ///< A list of available bitrates in megabits per second (in ascending order).
+    int TilingCount; ///< The number of tiles in each direction on a cubemap face.
+    ViewportConfig ViewportConfig; ///< The viewport configuration.
     double MaxBufferSeconds; ///< The maximum buffer level in seconds.
 };
 
@@ -40,6 +55,8 @@ export {
     DESCRIBE_STRUCT(StreamingConfig, (), (
                         SegmentSeconds,
                         BitratesMbps,
+                        TilingCount,
+                        ViewportConfig,
                         MaxBufferSeconds
                     ))
 }

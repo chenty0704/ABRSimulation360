@@ -6,7 +6,8 @@ target_link_libraries(ThroughputPredictorsTest PRIVATE
         ThroughputPredictors)
 
 add_executable(ABRSimulation360Test
-        "NetworkSimulatorTest.cpp")
+        "NetworkSimulatorTest.cpp"
+        "ViewportSimulatorTest.cpp")
 target_link_libraries(ABRSimulation360Test PRIVATE
         GTest::gtest_main
         ABRSimulation360)

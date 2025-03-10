@@ -6,6 +6,7 @@ project(ABRSimulation360
         HOMEPAGE_URL "https://github.com/chenty0704/ABRSimulation360"
         LANGUAGES CXX)
 
+find_package(directxtk12 REQUIRED CONFIG)
 find_package(LibraryLinkUtilities REQUIRED CONFIG)
 find_package(System REQUIRED CONFIG)
 
