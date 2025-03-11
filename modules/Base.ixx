@@ -27,6 +27,36 @@ export struct SphericalPosition {
 
     bool operator==(const SphericalPosition &) const = default;
     bool operator!=(const SphericalPosition &) const = default;
+
+    /// Clamps a pitch angle to the valid range;
+    /// @param pitchDegrees A potentially invalid pitch angle in degrees.
+    /// @returns The clamped pitch angle in degrees.
+    [[nodiscard]] static double ClampPitchDegrees(double pitchDegrees) {
+        return clamp(pitchDegrees, -90., 90.);
+    }
+
+    /// Wraps a yaw angle to the standard range.
+    /// @param yawDegrees A yaw angle in the linear space in degrees.
+    /// @returns The standardized yaw angle in degrees.
+    [[nodiscard]] static double WrapYawDegrees(double yawDegrees) {
+        const auto degrees = fmod(yawDegrees + 180, 360.);
+        return degrees >= 0. ? degrees - 180 : degrees + 180;
+    }
+
+    /// Unwraps a list of yaw angles to the linear space.
+    /// @param yawsDegrees A list of standardized yaw angles in degrees.
+    /// @returns A list of yaw angles in the linear space in degrees.
+    [[nodiscard]] static vector<double> UnwrapYawsDegrees(span<const double> yawsDegrees) {
+        vector unwrapped(yawsDegrees.size(), 0.);
+        unwrapped.front() = yawsDegrees.front();
+        auto biasDegrees = 0.;
+        for (auto i = 1; i < yawsDegrees.size(); ++i) {
+            if (yawsDegrees[i] > yawsDegrees[i - 1] + 180) biasDegrees -= 360;
+            else if (yawsDegrees[i] < yawsDegrees[i - 1] - 180) biasDegrees += 360;
+            unwrapped[i] = yawsDegrees[i] + biasDegrees;
+        }
+        return unwrapped;
+    }
 };
 
 /// Represents the configuration for a viewport.

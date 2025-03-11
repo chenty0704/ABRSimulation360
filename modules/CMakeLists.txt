@@ -14,6 +14,16 @@ target_link_libraries(ThroughputPredictors PUBLIC
         System::System
         Base)
 
+add_library(ViewportPredictors)
+target_sources(ViewportPredictors PUBLIC FILE_SET CXX_MODULES FILES
+        "ViewportPredictors/IViewportPredictor.ixx"
+        "ViewportPredictors/LinearPredictor.ixx"
+        "ViewportPredictors/StaticPredictor.ixx"
+        "ViewportPredictors/ViewportPredictorFactory.ixx")
+target_link_libraries(ViewportPredictors PUBLIC
+        System::System
+        Base)
+
 add_library(ABRSimulation360)
 target_sources(ABRSimulation360 PUBLIC FILE_SET CXX_MODULES FILES
         "NetworkSimulator.ixx"
