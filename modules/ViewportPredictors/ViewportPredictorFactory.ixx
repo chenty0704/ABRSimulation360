@@ -9,6 +9,7 @@ import System.Base;
 import ABRSimulation360.ViewportPredictors.GravitationalPredictor;
 import ABRSimulation360.ViewportPredictors.IViewportPredictor;
 import ABRSimulation360.ViewportPredictors.LinearPredictor;
+import ABRSimulation360.ViewportPredictors.NavGraphPredictor;
 import ABRSimulation360.ViewportPredictors.StaticPredictor;
 
 using namespace std;
@@ -29,6 +30,7 @@ public:
         FOR_EACH(TRY_CREATE, (
                      GravitationalPredictor,
                      LinearPredictor,
+                     NavGraphPredictor,
                      StaticPredictor
                  ))
         throw runtime_error("Unknown viewport predictor options.");
