@@ -43,6 +43,17 @@ export struct SphericalPosition {
         return degrees >= 0. ? degrees - 180 : degrees + 180;
     }
 
+    /// Returns the difference between two yaw angles after unwrapping in degrees.
+    /// @param yaw1Degrees The first yaw angle in degrees.
+    /// @param yaw2Degrees The second yaw angle in degrees.
+    /// @returns The difference between the two yaw angles after unwrapping in degrees.
+    [[nodiscard]] static double YawDifferenceDegrees(double yaw1Degrees, double yaw2Degrees) {
+        auto diffDegrees = yaw2Degrees - yaw1Degrees;
+        if (diffDegrees > 180.) diffDegrees -= 360;
+        else if (diffDegrees < -180.) diffDegrees += 360;
+        return diffDegrees;
+    }
+
     /// Unwraps a list of yaw angles to the linear space.
     /// @param yawsDegrees A list of standardized yaw angles in degrees.
     /// @returns A list of yaw angles in the linear space in degrees.

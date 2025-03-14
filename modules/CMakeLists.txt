@@ -16,11 +16,13 @@ target_link_libraries(ThroughputPredictors PUBLIC
 
 add_library(ViewportPredictors)
 target_sources(ViewportPredictors PUBLIC FILE_SET CXX_MODULES FILES
+        "ViewportPredictors/GravitationalPredictor.ixx"
         "ViewportPredictors/IViewportPredictor.ixx"
         "ViewportPredictors/LinearPredictor.ixx"
         "ViewportPredictors/StaticPredictor.ixx"
         "ViewportPredictors/ViewportPredictorFactory.ixx")
 target_link_libraries(ViewportPredictors PUBLIC
+        LibraryLinkUtilities::LibraryLinkUtilities
         System::System
         Base)
 

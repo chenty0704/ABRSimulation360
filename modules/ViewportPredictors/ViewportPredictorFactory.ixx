@@ -6,6 +6,7 @@ export module ABRSimulation360.ViewportPredictors.ViewportPredictorFactory;
 
 import System.Base;
 
+import ABRSimulation360.ViewportPredictors.GravitationalPredictor;
 import ABRSimulation360.ViewportPredictors.IViewportPredictor;
 import ABRSimulation360.ViewportPredictors.LinearPredictor;
 import ABRSimulation360.ViewportPredictors.StaticPredictor;
@@ -26,6 +27,7 @@ public:
     [[nodiscard]] static unique_ptr<IViewportPredictor> Create(double intervalSeconds,
                                                                const BaseViewportPredictorOptions &options) {
         FOR_EACH(TRY_CREATE, (
+                     GravitationalPredictor,
                      LinearPredictor,
                      StaticPredictor
                  ))
