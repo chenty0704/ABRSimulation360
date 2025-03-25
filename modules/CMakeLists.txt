@@ -27,6 +27,15 @@ target_link_libraries(ViewportPredictors PUBLIC
         System::System
         Base)
 
+add_library(AggregateControllers)
+target_sources(AggregateControllers PUBLIC FILE_SET CXX_MODULES FILES
+        "AggregateControllers/AggregateControllerFactory.ixx"
+        "AggregateControllers/IAggregateController.ixx"
+        "AggregateControllers/ThroughputBasedController.ixx")
+target_link_libraries(AggregateControllers PUBLIC
+        System::System
+        Base)
+
 add_library(ABRSimulation360)
 target_sources(ABRSimulation360 PUBLIC FILE_SET CXX_MODULES FILES
         "NetworkSimulator.ixx"
@@ -35,6 +44,7 @@ target_sources(ABRSimulation360 PUBLIC FILE_SET CXX_MODULES FILES
 target_link_libraries(ABRSimulation360
         PUBLIC
         System::System
+        AggregateControllers
         Base
         ThroughputPredictors
         ViewportPredictors
