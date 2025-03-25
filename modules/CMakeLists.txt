@@ -30,10 +30,13 @@ target_link_libraries(ViewportPredictors PUBLIC
 add_library(ABRSimulation360)
 target_sources(ABRSimulation360 PUBLIC FILE_SET CXX_MODULES FILES
         "NetworkSimulator.ixx"
+        "ViewportPredictionSimulator.ixx"
         "ViewportSimulator.ixx")
 target_link_libraries(ABRSimulation360
         PUBLIC
         System::System
         Base
+        ThroughputPredictors
+        ViewportPredictors
         PRIVATE
         Microsoft::DirectXTK12)

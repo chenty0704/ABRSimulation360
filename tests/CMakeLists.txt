@@ -13,6 +13,7 @@ target_link_libraries(ViewportPredictorsTest PRIVATE
 
 add_executable(ABRSimulation360Test
         "NetworkSimulatorTest.cpp"
+        "ViewportPredictionSimulatorTest.cpp"
         "ViewportSimulatorTest.cpp")
 target_link_libraries(ABRSimulation360Test PRIVATE
         GTest::gtest_main
