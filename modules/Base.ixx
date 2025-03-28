@@ -86,7 +86,7 @@ export {
 /// Represents the configuration for a 360° adaptive bitrate streaming session.
 export struct StreamingConfig {
     double SegmentSeconds; ///< The segment duration in seconds.
-    vector<double> BitratesMbps; ///< A list of available bitrates in megabits per second (in ascending order).
+    vector<double> BitratesPerFaceMbps; /// A list of available bitrates per cubemap face in megabits per second.
     int TilingCount; ///< The number of tiles in each direction on a cubemap face.
     ViewportConfig ViewportConfig; ///< The viewport configuration.
     double MaxBufferSeconds; ///< The maximum buffer level in seconds.
@@ -95,7 +95,7 @@ export struct StreamingConfig {
 export {
     DESCRIBE_STRUCT(StreamingConfig, (), (
                         SegmentSeconds,
-                        BitratesMbps,
+                        BitratesPerFaceMbps,
                         TilingCount,
                         ViewportConfig,
                         MaxBufferSeconds

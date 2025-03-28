@@ -36,6 +36,15 @@ target_link_libraries(AggregateControllers PUBLIC
         System::System
         Base)
 
+add_library(BitrateAllocators)
+target_sources(BitrateAllocators PUBLIC FILE_SET CXX_MODULES FILES
+        "BitrateAllocators/BitrateAllocatorFactory.ixx"
+        "BitrateAllocators/HybridAllocator.ixx"
+        "BitrateAllocators/IBitrateAllocator.ixx")
+target_link_libraries(BitrateAllocators PUBLIC
+        System::System
+        Base)
+
 add_library(ABRSimulation360)
 target_sources(ABRSimulation360 PUBLIC FILE_SET CXX_MODULES FILES
         "NetworkSimulator.ixx"
@@ -46,6 +55,7 @@ target_link_libraries(ABRSimulation360
         System::System
         AggregateControllers
         Base
+        BitrateAllocators
         ThroughputPredictors
         ViewportPredictors
         PRIVATE

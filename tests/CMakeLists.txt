@@ -11,6 +11,12 @@ target_link_libraries(ViewportPredictorsTest PRIVATE
         GTest::gtest_main
         ViewportPredictors)
 
+add_executable(BitrateAllocatorsTest
+        "BitrateAllocators/HybridAllocatorTest.cpp")
+target_link_libraries(BitrateAllocatorsTest PRIVATE
+        GTest::gtest_main
+        BitrateAllocators)
+
 add_executable(ABRSimulation360Test
         "NetworkSimulatorTest.cpp"
         "ViewportPredictionSimulatorTest.cpp"
