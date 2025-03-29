@@ -9,6 +9,7 @@ import System.Base;
 import ABRSimulation360.Base;
 import ABRSimulation360.BitrateAllocators.HybridAllocator;
 import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
+import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
 
 using namespace std;
 
@@ -26,7 +27,8 @@ public:
     [[nodiscard]] static unique_ptr<IBitrateAllocator> Create(const StreamingConfig &streamingConfig,
                                                               const BaseBitrateAllocatorOptions &options) {
         FOR_EACH(TRY_CREATE, (
-                     HybridAllocator
+                     HybridAllocator,
+                     OnlineLearningAllocator
                  ))
         throw runtime_error("Unknown bitrate allocator options.");
     }

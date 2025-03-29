@@ -40,7 +40,8 @@ add_library(BitrateAllocators)
 target_sources(BitrateAllocators PUBLIC FILE_SET CXX_MODULES FILES
         "BitrateAllocators/BitrateAllocatorFactory.ixx"
         "BitrateAllocators/HybridAllocator.ixx"
-        "BitrateAllocators/IBitrateAllocator.ixx")
+        "BitrateAllocators/IBitrateAllocator.ixx"
+        "BitrateAllocators/OnlineLearningAllocator.ixx")
 target_link_libraries(BitrateAllocators PUBLIC
         System::System
         Base)

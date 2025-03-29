@@ -12,7 +12,8 @@ target_link_libraries(ViewportPredictorsTest PRIVATE
         ViewportPredictors)
 
 add_executable(BitrateAllocatorsTest
-        "BitrateAllocators/HybridAllocatorTest.cpp")
+        "BitrateAllocators/HybridAllocatorTest.cpp"
+        "BitrateAllocators/OnlineLearningAllocatorTest.cpp")
 target_link_libraries(BitrateAllocatorsTest PRIVATE
         GTest::gtest_main
         BitrateAllocators)
