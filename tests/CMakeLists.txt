@@ -19,6 +19,7 @@ target_link_libraries(BitrateAllocatorsTest PRIVATE
         BitrateAllocators)
 
 add_executable(ABRSimulation360Test
+        "ABRSimulator360Test.cpp"
         "NetworkSimulatorTest.cpp"
         "ViewportPredictionSimulatorTest.cpp"
         "ViewportSimulatorTest.cpp")

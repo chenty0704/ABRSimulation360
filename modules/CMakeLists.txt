@@ -48,6 +48,7 @@ target_link_libraries(BitrateAllocators PUBLIC
 
 add_library(ABRSimulation360)
 target_sources(ABRSimulation360 PUBLIC FILE_SET CXX_MODULES FILES
+        "ABRSimulator360.ixx"
         "NetworkSimulator.ixx"
         "ViewportPredictionSimulator.ixx"
         "ViewportSimulator.ixx")

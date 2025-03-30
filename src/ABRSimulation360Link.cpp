@@ -8,7 +8,13 @@ import System.JSON;
 import System.Math;
 import System.MDArray;
 
+import ABRSimulation360.ABRSimulator360;
+import ABRSimulation360.AggregateControllers.IAggregateController;
+import ABRSimulation360.AggregateControllers.ThroughputBasedController;
 import ABRSimulation360.Base;
+import ABRSimulation360.BitrateAllocators.HybridAllocator;
+import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
+import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
 import ABRSimulation360.ThroughputPredictors.EMAPredictor;
 import ABRSimulation360.ThroughputPredictors.IThroughputPredictor;
 import ABRSimulation360.ThroughputPredictors.MovingAveragePredictor;
@@ -36,6 +42,15 @@ LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseViewportPredictorOptions, (
                                         LinearPredictorOptions,
                                         NavGraphPredictorOptions,
                                         StaticPredictorOptions
+                                    ))
+
+LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseAggregateControllerOptions, (
+                                        ThroughputBasedControllerOptions
+                                    ))
+
+LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseBitrateAllocatorOptions, (
+                                        HybridAllocatorOptions,
+                                        OnlineLearningAllocatorOptions
                                     ))
 
 extern "C" __declspec(dllexport)
@@ -73,5 +88,48 @@ int ViewportPredictionSimulate(WolframLibraryData, int64_t argc, MArgument *args
         ViewportPredictionSimulator::Simulate(windowLength, segmentSeconds, *predictorOptions, viewportData,
                                               _simulationData);
         argQueue.SetOutput(simulationData);
+    });
+}
+
+/// Simulates a 360° adaptive bitrate streaming configuration on a collection of network series and viewport series.
+/// @param streamingConfig ["Object"] The adaptive bitrate streaming configuration.
+/// @param controllerOptions ["TypedOptions"] The options for the aggregate controller.
+/// @param allocatorOptions ["TypedOptions"] The options for the bitrate allocator.
+/// @param networkData [LibraryDataType[TemporalData, Real]] A collection of network series.
+/// @param viewportData [LibraryDataType[TemporalData, Real]] A collection of viewport series.
+/// @param throughputPredictorOptions ["TypedOptions"] The options for the throughput predictor.
+/// @param viewportPredictorOptions ["TypedOptions"] The options for the viewport predictor.
+/// @returns ["DataStore"] A collection of simulation series.
+extern "C" __declspec(dllexport)
+int ABRSimulate360(WolframLibraryData, int64_t argc, MArgument *args, MArgument out) {
+    return LLU::TryInvoke([&] {
+        LLU::MArgumentQueue argQueue(argc, args, out);
+        const auto streamingConfig = argQueue.Pop<StreamingConfig>();
+        const auto controllerOptions = argQueue.Pop<unique_ptr<BaseAggregateControllerOptions>>();
+        const auto allocatorOptions = argQueue.Pop<unique_ptr<BaseBitrateAllocatorOptions>>();
+        const auto networkData = argQueue.Pop<NetworkDataView>();
+        const auto viewportData = argQueue.Pop<ViewportDataView>();
+        const auto throughputPredictorOptions = argQueue.Pop<unique_ptr<BaseThroughputPredictorOptions>>();
+        const auto viewportPredictorOptions = argQueue.Pop<unique_ptr<BaseViewportPredictorOptions>>();
+
+        const auto sessionCount = viewportData.PathCount();
+        const auto segmentCount = Math::Round(viewportData.DurationSeconds() / streamingConfig.SegmentSeconds);
+        const auto tileCount = streamingConfig.TilingCount * streamingConfig.TilingCount * 6;
+        LLU::Tensor rebufferingSeconds(0., {sessionCount});
+        LLU::Tensor bufferedBitratesMbps(0., {sessionCount, segmentCount, tileCount});
+        LLU::Tensor distributions(0., {sessionCount, segmentCount, tileCount});
+        const SimulationDataRef simulationData = {
+            rebufferingSeconds, LLU::ToMDSpan<double, dims<3>>(bufferedBitratesMbps),
+            LLU::ToMDSpan<double, dims<3>>(distributions)
+        };
+        ABRSimulator360::Simulate(streamingConfig, *controllerOptions, *allocatorOptions,
+                                  networkData, viewportData, simulationData,
+                                  {*throughputPredictorOptions, *viewportPredictorOptions});
+
+        LLU::DataList<LLU::NodeType::Any> _out;
+        _out.push_back("RebufferingSeconds", move(rebufferingSeconds));
+        _out.push_back("BufferedBitratesMbps", move(bufferedBitratesMbps));
+        _out.push_back("ViewportDistributions", move(distributions));
+        argQueue.SetOutput(_out);
     });
 }
