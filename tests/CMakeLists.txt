@@ -12,6 +12,7 @@ target_link_libraries(ViewportPredictorsTest PRIVATE
         ViewportPredictors)
 
 add_executable(BitrateAllocatorsTest
+        "BitrateAllocators/BOLAAllocatorTest.cpp"
         "BitrateAllocators/HybridAllocatorTest.cpp"
         "BitrateAllocators/OnlineLearningAllocatorTest.cpp")
 target_link_libraries(BitrateAllocatorsTest PRIVATE

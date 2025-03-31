@@ -138,7 +138,8 @@ public:
             const auto distribution = viewportSimulator.ToDistribution(
                 viewportPredictor->PredictPositions(bufferSeconds, segmentSeconds));
             const span<const double> prevDistribution(&out.ViewportDistributions[endSegmentID - 1, 0], tileCount);
-            const BitrateAllocatorContext allocatorContext = {aggregateBitrateMbps, distribution, prevDistribution};
+            const BitrateAllocatorContext allocatorContext =
+                {aggregateBitrateMbps, bufferSeconds, distribution, prevDistribution};
             const auto bitrateIDs = allocator->GetBitrateIDs(allocatorContext);
 
             const auto downloadSeconds = DownloadSegment(endSegmentID, bitrateIDs).Seconds;

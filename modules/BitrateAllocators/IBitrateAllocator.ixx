@@ -23,6 +23,7 @@ export {
 /// Provides context for a bitrate allocator.
 export struct BitrateAllocatorContext {
     double AggregateBitrateMbps; ///< The aggregate bitrate in megabits per second.
+    double BufferSeconds; ///< The buffer level in seconds.
     span<const double> ViewportDistribution; ///< The predicted viewport distribution.
     span<const double> PrevViewportDistribution; ///< The actual viewport distribution of the previous segment.
 };
@@ -41,12 +42,15 @@ public:
 /// Provides a skeletal implementation of a bitrate allocator.
 export class BaseBitrateAllocator : public IBitrateAllocator {
 protected:
+    double _segmentSeconds;
     int _tileCount;
     vector<double> _bitratesMbps;
+    double _maxBufferSeconds;
 
     vector<double> _utilities;
 
-    explicit BaseBitrateAllocator(const StreamingConfig &streamingConfig, const BaseBitrateAllocatorOptions & = {}) {
+    explicit BaseBitrateAllocator(const StreamingConfig &streamingConfig, const BaseBitrateAllocatorOptions & = {}) :
+        _segmentSeconds(streamingConfig.SegmentSeconds), _maxBufferSeconds(streamingConfig.MaxBufferSeconds) {
         const auto tileCountPerFace = streamingConfig.TilingCount * streamingConfig.TilingCount;
         _tileCount = tileCountPerFace * 6;
         _bitratesMbps = streamingConfig.BitratesPerFaceMbps / tileCountPerFace;

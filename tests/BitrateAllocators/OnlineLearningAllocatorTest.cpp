@@ -9,13 +9,13 @@ import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
 using namespace std;
 
 TEST(OnlineLearningAllocatorTest, BasicAllocation) {
-    const StreamingConfig streamingConfig = {1., {1., 2., 4., 8.}, 1};
+    const StreamingConfig streamingConfig = {1., {1., 2., 4., 8.}, 1, {60., 1.}, 5.};
     const vector predictedDistribution = {1., 0., 0., 0., 0., 0.};
     OnlineLearningAllocatorOptions options;
     options.InitialTrustLevel = 0.;
     OnlineLearningAllocator allocator(streamingConfig, options);
 
-    BitrateAllocatorContext context = {15., predictedDistribution};
+    BitrateAllocatorContext context = {.AggregateBitrateMbps = 15., .ViewportDistribution = predictedDistribution};
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 1, 1, 1, 1, 1}));
 
     vector prevDistribution = {1., 0., 0., 0., 0., 0.};

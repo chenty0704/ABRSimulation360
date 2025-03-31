@@ -7,6 +7,7 @@ export module ABRSimulation360.BitrateAllocators.BitrateAllocatorFactory;
 import System.Base;
 
 import ABRSimulation360.Base;
+import ABRSimulation360.BitrateAllocators.BOLAAllocator;
 import ABRSimulation360.BitrateAllocators.HybridAllocator;
 import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
 import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
@@ -27,6 +28,7 @@ public:
     [[nodiscard]] static unique_ptr<IBitrateAllocator> Create(const StreamingConfig &streamingConfig,
                                                               const BaseBitrateAllocatorOptions &options) {
         FOR_EACH(TRY_CREATE, (
+                     BOLAAllocator,
                      HybridAllocator,
                      OnlineLearningAllocator
                  ))

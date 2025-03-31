@@ -9,7 +9,7 @@ import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
 using namespace std;
 
 TEST(HybridAllocatorTest, BasicAllocation) {
-    const StreamingConfig streamingConfig = {1., {1., 2., 4., 8.}, 1};
+    const StreamingConfig streamingConfig = {1., {1., 2., 4., 8.}, 1, {60., 1.}, 5.};
     const vector distribution = {1., 0., 0., 0., 0., 0.};
 
     HybridAllocatorOptions options;
