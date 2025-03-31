@@ -20,14 +20,12 @@ TEST(OnlineLearningAllocatorTest, BasicAllocation) {
 
     vector prevDistribution = {1., 0., 0., 0., 0., 0.};
     context.PrevViewportDistribution = prevDistribution;
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 1, 1, 1, 1, 1}));
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 1, 1, 1, 1, 1}));
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 1, 1, 1, 1, 1}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 1, 1, 0, 0, 0}));
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 1, 1, 0, 0, 0}));
 
     prevDistribution = {0., 1., 0., 0., 0., 0.};
     context.PrevViewportDistribution = prevDistribution;
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 1, 1, 0, 0, 0}));
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 1, 1, 1, 1, 1}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 1, 1, 0, 0, 0}));
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 1, 1, 1, 1, 1}));
 }

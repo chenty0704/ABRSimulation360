@@ -15,7 +15,7 @@ using namespace std;
 /// Represents the options for an online learning allocator.
 export struct OnlineLearningAllocatorOptions : BaseBitrateAllocatorOptions {
     double InitialTrustLevel = 0.5; ///< The initial trust level in viewport predictions.
-    double LearningRate = 0.1; ///< The learning rate for the trust level.
+    double LearningRate = 0.5; ///< The learning rate for the trust level.
     pair<double, double> TrustLevelRange = {0., 0.95}; ///< The clipping range of the trust level.
 };
 
@@ -49,15 +49,17 @@ public:
     }
 
     [[nodiscard]] vector<int> GetBitrateIDs(const BitrateAllocatorContext &context) override {
+        const auto minBitrateMbps = _bitratesMbps.front(), maxBitrateMbps = _bitratesMbps.back();
         const auto aggregateBitrateMbps = context.AggregateBitrateMbps;
         const auto predictedDistribution = context.ViewportDistribution;
         const auto prevDistribution = context.PrevViewportDistribution;
 
         if (!_prevBitrateIDs.empty()) {
-            const auto dPrevWeightedDistribution = _prevPredictedDistribution - 1. / _tileCount;
-            const auto dPrevBitratesMbps = dPrevWeightedDistribution * _prevAggregateBitrateMbps;
+            const auto utilityNormalizer = Math::Log(maxBitrateMbps / minBitrateMbps);
+            const auto dPrevMixedDistribution = _prevPredictedDistribution - 1. / _tileCount;
+            const auto dPrevBitratesMbps = dPrevMixedDistribution * _prevAggregateBitrateMbps;
             const auto dByPrevBitratesMbps = views::iota(0, _tileCount) | views::transform([&](int tileID) {
-                return ExpectedUtilityDerivative(_prevBitrateIDs[tileID], prevDistribution[tileID]);
+                return prevDistribution[tileID] / (_bitratesMbps[_prevBitrateIDs[tileID]] * utilityNormalizer);
             }) | ranges::to<vector>();
             const auto derivative = Math::Dot(dByPrevBitratesMbps, dPrevBitratesMbps);
             _trustLevel = clamp(_trustLevel + _learningRate * derivative, _minTrustLevel, _maxTrustLevel);
@@ -65,9 +67,9 @@ public:
 
         _prevAggregateBitrateMbps = aggregateBitrateMbps;
         _prevPredictedDistribution = vector(from_range, predictedDistribution);
-        const auto weightedDistribution = views::iota(0, _tileCount) | views::transform([&](int tileID) {
+        const auto mixedDistribution = views::iota(0, _tileCount) | views::transform([&](int tileID) {
             return predictedDistribution[tileID] * _trustLevel + (1 - _trustLevel) / _tileCount;
         }) | ranges::to<vector>();
-        return _prevBitrateIDs = FromViewportDistribution(aggregateBitrateMbps, weightedDistribution);
+        return _prevBitrateIDs = FromViewportDistribution(aggregateBitrateMbps, mixedDistribution);
     }
 };
