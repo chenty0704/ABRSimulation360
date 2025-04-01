@@ -18,6 +18,7 @@ import ABRSimulation360.BitrateAllocators.FlareAllocator;
 import ABRSimulation360.BitrateAllocators.HybridAllocator;
 import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
 import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
+import ABRSimulation360.BitrateAllocators.ProbDASHAllocator;
 import ABRSimulation360.ThroughputPredictors.EMAPredictor;
 import ABRSimulation360.ThroughputPredictors.IThroughputPredictor;
 import ABRSimulation360.ThroughputPredictors.MovingAveragePredictor;
@@ -58,7 +59,8 @@ LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseBitrateAllocatorOptions, (
                                         DragonflyAllocatorOptions,
                                         FlareAllocatorOptions,
                                         HybridAllocatorOptions,
-                                        OnlineLearningAllocatorOptions
+                                        OnlineLearningAllocatorOptions,
+                                        ProbDASHAllocatorOptions
                                     ))
 
 extern "C" __declspec(dllexport)

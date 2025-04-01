@@ -13,6 +13,7 @@ import ABRSimulation360.BitrateAllocators.FlareAllocator;
 import ABRSimulation360.BitrateAllocators.HybridAllocator;
 import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
 import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
+import ABRSimulation360.BitrateAllocators.ProbDASHAllocator;
 
 using namespace std;
 
@@ -34,7 +35,8 @@ public:
                      DragonflyAllocator,
                      FlareAllocator,
                      HybridAllocator,
-                     OnlineLearningAllocator
+                     OnlineLearningAllocator,
+                     ProbDASHAllocator
                  ))
         throw runtime_error("Unknown bitrate allocator options.");
     }

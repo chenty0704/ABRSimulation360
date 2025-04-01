@@ -45,7 +45,8 @@ target_sources(BitrateAllocators PUBLIC FILE_SET CXX_MODULES FILES
         "BitrateAllocators/FlareAllocator.ixx"
         "BitrateAllocators/HybridAllocator.ixx"
         "BitrateAllocators/IBitrateAllocator.ixx"
-        "BitrateAllocators/OnlineLearningAllocator.ixx")
+        "BitrateAllocators/OnlineLearningAllocator.ixx"
+        "BitrateAllocators/ProbDASHAllocator.ixx")
 target_link_libraries(BitrateAllocators PUBLIC
         System::System
         Base)
