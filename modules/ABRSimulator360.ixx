@@ -74,9 +74,10 @@ public:
                          const ABRSimulation360Options &options = {}) {
         const auto segmentSeconds = streamingConfig.SegmentSeconds;
         const auto segmentCount = Math::Round(viewportSeries.DurationSeconds() / segmentSeconds);
-        const auto tileCountPerFace = streamingConfig.TilingCount * streamingConfig.TilingCount;
-        const auto tileCount = tileCountPerFace * 6;
+        const auto tilingCount = streamingConfig.TilingCount;
+        const auto tileCountPerFace = tilingCount * tilingCount, tileCount = tileCountPerFace * 6;
         const auto bitratesMbps = streamingConfig.BitratesPerFaceMbps / tileCountPerFace;
+        const auto viewportConfig = streamingConfig.ViewportConfig;
         const auto maxBufferSeconds = streamingConfig.MaxBufferSeconds;
 
         const auto throughputPredictor = ThroughputPredictorFactory::Create(options.ThroughputPredictorOptions);
@@ -140,11 +141,16 @@ public:
             const AggregateControllerContext controllerContext = {throughputMbps, bufferSeconds};
             const auto aggregateBitrateMbps = controller->GetAggregateBitrateMbps(controllerContext);
 
-            const auto distribution = viewportSimulator.ToDistribution(
-                viewportPredictor->PredictPositions(bufferSeconds, segmentSeconds));
+            const auto positions = viewportPredictor->PredictPositions(bufferSeconds, segmentSeconds);
+            const auto distribution = viewportSimulator.ToDistribution(positions);
             const span<const double> prevDistribution(&out.ViewportDistributions[endSegmentID - 1, 0], tileCount);
+            const auto DilatedDistribution = [&](double dilation) {
+                const auto dilatedFovDegrees = (1 - dilation) * viewportConfig.FoVDegrees + dilation * 180;
+                ViewportSimulator _viewportSimulator({dilatedFovDegrees, viewportConfig.AspectRatio}, tilingCount);
+                return _viewportSimulator.ToDistribution(positions);
+            };
             const BitrateAllocatorContext allocatorContext =
-                {aggregateBitrateMbps, bufferSeconds, distribution, prevDistribution};
+                {aggregateBitrateMbps, bufferSeconds, distribution, prevDistribution, DilatedDistribution};
             const auto bitrateIDs = allocator->GetBitrateIDs(allocatorContext);
 
             const auto downloadSeconds = DownloadSegment(endSegmentID, bitrateIDs).Seconds;

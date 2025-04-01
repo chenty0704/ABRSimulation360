@@ -13,6 +13,7 @@ import ABRSimulation360.AggregateControllers.IAggregateController;
 import ABRSimulation360.AggregateControllers.ThroughputBasedController;
 import ABRSimulation360.Base;
 import ABRSimulation360.BitrateAllocators.BOLAAllocator;
+import ABRSimulation360.BitrateAllocators.DragonflyAllocator;
 import ABRSimulation360.BitrateAllocators.HybridAllocator;
 import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
 import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
@@ -53,6 +54,7 @@ LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseAggregateControllerOptions, (
 
 LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseBitrateAllocatorOptions, (
                                         BOLAAllocatorOptions,
+                                        DragonflyAllocatorOptions,
                                         HybridAllocatorOptions,
                                         OnlineLearningAllocatorOptions
                                     ))

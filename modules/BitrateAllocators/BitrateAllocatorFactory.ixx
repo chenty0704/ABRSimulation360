@@ -8,6 +8,7 @@ import System.Base;
 
 import ABRSimulation360.Base;
 import ABRSimulation360.BitrateAllocators.BOLAAllocator;
+import ABRSimulation360.BitrateAllocators.DragonflyAllocator;
 import ABRSimulation360.BitrateAllocators.HybridAllocator;
 import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
 import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
@@ -29,6 +30,7 @@ public:
                                                               const BaseBitrateAllocatorOptions &options) {
         FOR_EACH(TRY_CREATE, (
                      BOLAAllocator,
+                     DragonflyAllocator,
                      HybridAllocator,
                      OnlineLearningAllocator
                  ))

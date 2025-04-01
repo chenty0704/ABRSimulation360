@@ -26,6 +26,11 @@ export struct BitrateAllocatorContext {
     double BufferSeconds; ///< The buffer level in seconds.
     span<const double> ViewportDistribution; ///< The predicted viewport distribution.
     span<const double> PrevViewportDistribution; ///< The actual viewport distribution of the previous segment.
+
+    /// Returns the dilated viewport distribution.
+    /// @param dilation The dilation factor.
+    /// @returns The dilated viewport distribution.
+    function<vector<double>(double)> DilatedViewportDistribution;
 };
 
 /// Defines the interface of a bitrate allocator.
