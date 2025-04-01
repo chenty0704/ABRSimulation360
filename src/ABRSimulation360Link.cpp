@@ -128,9 +128,10 @@ int ABRSimulate360(WolframLibraryData, int64_t argc, MArgument *args, MArgument 
         LLU::Tensor rebufferingSeconds(0., {sessionCount});
         LLU::Tensor bufferedBitratesMbps(0., {sessionCount, segmentCount, tileCount});
         LLU::Tensor distributions(0., {sessionCount, segmentCount, tileCount});
+        LLU::Tensor predictedDistributions(0., {sessionCount, segmentCount - 1, tileCount});
         const SimulationDataRef simulationData = {
             rebufferingSeconds, LLU::ToMDSpan<double, dims<3>>(bufferedBitratesMbps),
-            LLU::ToMDSpan<double, dims<3>>(distributions)
+            LLU::ToMDSpan<double, dims<3>>(distributions), LLU::ToMDSpan<double, dims<3>>(predictedDistributions)
         };
         ABRSimulator360::Simulate(streamingConfig, *controllerOptions, *allocatorOptions,
                                   networkData, viewportData, simulationData,
@@ -140,6 +141,7 @@ int ABRSimulate360(WolframLibraryData, int64_t argc, MArgument *args, MArgument 
         _out.push_back("RebufferingSeconds", move(rebufferingSeconds));
         _out.push_back("BufferedBitratesMbps", move(bufferedBitratesMbps));
         _out.push_back("ViewportDistributions", move(distributions));
+        _out.push_back("PredictedViewportDistributions", move(predictedDistributions));
         argQueue.SetOutput(_out);
     });
 }

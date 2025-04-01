@@ -21,8 +21,11 @@ TEST(ABRSimulator360Test, BasicSimulation) {
     double rebufferingSeconds;
     mdarray<double, dims<2>> bufferedBitratesMbps(4, 6);
     mdarray<double, dims<2>> distributions(4, 6);
-    const SimulationSeriesRef simulationSeries =
-        {rebufferingSeconds, bufferedBitratesMbps.to_mdspan(), distributions.to_mdspan()};
+    mdarray<double, dims<2>> predictedDistributions(3, 6);
+    const SimulationSeriesRef simulationSeries = {
+        rebufferingSeconds, bufferedBitratesMbps.to_mdspan(),
+        distributions.to_mdspan(), predictedDistributions.to_mdspan()
+    };
     ABRSimulator360::Simulate(streamingConfig, ThroughputBasedControllerOptions(), HybridAllocatorOptions(),
                               networkSeries, viewportSeries, simulationSeries);
     EXPECT_DOUBLE_EQ(rebufferingSeconds, 0.);
@@ -33,6 +36,10 @@ TEST(ABRSimulator360Test, BasicSimulation) {
                   2., 2., 1., 1., 1., 8.}));
     EXPECT_EQ(distributions.container(), vector({
                   0., 0., 0., 0., 0., 1.,
+                  0., 0., 0., 0., 0., 1.,
+                  0., 0., 0., 0., 0., 1.,
+                  0., 0., 0., 0., 0., 1.}));
+    EXPECT_EQ(predictedDistributions.container(), vector({
                   0., 0., 0., 0., 0., 1.,
                   0., 0., 0., 0., 0., 1.,
                   0., 0., 0., 0., 0., 1.}));

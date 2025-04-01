@@ -28,6 +28,7 @@ export struct SimulationSeriesRef {
     double &RebufferingSeconds; ///< The total rebuffering duration in seconds.
     mdspan<double, dims<2>> BufferedBitratesMbps; ///< A 2D array of buffered bitrates in megabits per second.
     mdspan<double, dims<2>> ViewportDistributions; ///< A list of viewport distributions.
+    mdspan<double, dims<2>> PredictedViewportDistributions; ///< A list of predicted viewport distributions.
 };
 
 /// Refers to a collection of simulation series.
@@ -35,6 +36,7 @@ export struct SimulationDataRef {
     span<double> RebufferingSeconds; ///< A list of total rebuffering durations in seconds.
     mdspan<double, dims<3>> BufferedBitratesMbps; ///< A 3D array of buffered bitrates in megabits per second.
     mdspan<double, dims<3>> ViewportDistributions; ///< A 2D array of viewport distributions.
+    mdspan<double, dims<3>> PredictedViewportDistributions; ///< A 2D array of predicted viewport distributions.
 
     /// Returns the path at the specified index.
     /// @param index The index of the path.
@@ -42,7 +44,8 @@ export struct SimulationDataRef {
     [[nodiscard]] SimulationSeriesRef operator[](int index) const {
         const auto bitratesMbps = submdspan(BufferedBitratesMbps, index, full_extent, full_extent);
         const auto distributions = submdspan(ViewportDistributions, index, full_extent, full_extent);
-        return {RebufferingSeconds[index], bitratesMbps, distributions};
+        const auto predictedDistribution = submdspan(PredictedViewportDistributions, index, full_extent, full_extent);
+        return {RebufferingSeconds[index], bitratesMbps, distributions, predictedDistribution};
     }
 };
 
@@ -94,7 +97,6 @@ public:
 
         auto beginSegmentID = 0;
         auto secondsInSegment = 0.;
-        mdarray<int, dims<2>> bufferedBitrateIDs(segmentCount, tileCount);
         out.RebufferingSeconds = 0.;
 
         // Computes the viewport distributions.
@@ -105,12 +107,12 @@ public:
         }
 
         const auto DownloadSegment = [&](int segmentID, span<const int> bitrateIDs) {
-            const auto totalSizeMB = *ranges::fold_left_first(
-                views::iota(0, tileCount) | views::transform([&](int tileID) {
-                    return bitratesMbps[bitrateIDs[tileID]];
-                }), plus()) * segmentSeconds / 8;
+            const auto _bitratesMbps = views::iota(0, tileCount) | views::transform([&](int tileID) {
+                return bitratesMbps[bitrateIDs[tileID]];
+            }) | ranges::to<vector>();
+            const auto totalSizeMB = Math::Total(_bitratesMbps) * segmentSeconds / 8;
             const auto downloadInfo = networkSimulator.Download(totalSizeMB);
-            ranges::copy(bitrateIDs, &bufferedBitrateIDs[segmentID, 0]);
+            ranges::copy(_bitratesMbps, &out.BufferedBitratesMbps[segmentID, 0]);
             throughputPredictor->Update(downloadInfo.Value, downloadInfo.Seconds);
             return downloadInfo;
         };
@@ -143,6 +145,7 @@ public:
 
             const auto positions = viewportPredictor->PredictPositions(bufferSeconds, segmentSeconds);
             const auto distribution = viewportSimulator.ToDistribution(positions);
+            ranges::copy(distribution, &out.PredictedViewportDistributions[endSegmentID - 1, 0]);
             const span<const double> prevDistribution(&out.ViewportDistributions[endSegmentID - 1, 0], tileCount);
             const auto DilatedDistribution = [&](double dilation) {
                 const auto dilatedFovDegrees = (1 - dilation) * viewportConfig.FoVDegrees + dilation * 180;
@@ -160,9 +163,6 @@ public:
 
         // Plays the remaining buffer content.
         PlayVideo((segmentCount - beginSegmentID) * segmentSeconds - secondsInSegment);
-
-        ranges::transform(bufferedBitrateIDs.container(), out.BufferedBitratesMbps.data_handle(),
-                          [&](int bitrateID) { return bitratesMbps[bitrateID]; });
     }
 
     /// Simulates a 360° adaptive bitrate streaming configuration on a collection of network series and viewport series.
