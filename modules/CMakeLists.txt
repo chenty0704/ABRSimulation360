@@ -20,6 +20,7 @@ target_sources(ViewportPredictors PUBLIC FILE_SET CXX_MODULES FILES
         "ViewportPredictors/IViewportPredictor.ixx"
         "ViewportPredictors/LinearPredictor.ixx"
         "ViewportPredictors/NavGraphPredictor.ixx"
+        "ViewportPredictors/OfflinePredictor.ixx"
         "ViewportPredictors/StaticPredictor.ixx"
         "ViewportPredictors/ViewportPredictorFactory.ixx")
 target_link_libraries(ViewportPredictors PUBLIC

@@ -24,6 +24,7 @@ import ABRSimulation360.ViewportPredictors.GravitationalPredictor;
 import ABRSimulation360.ViewportPredictors.IViewportPredictor;
 import ABRSimulation360.ViewportPredictors.LinearPredictor;
 import ABRSimulation360.ViewportPredictors.NavGraphPredictor;
+import ABRSimulation360.ViewportPredictors.OfflinePredictor;
 import ABRSimulation360.ViewportPredictors.StaticPredictor;
 
 using namespace std;
@@ -42,6 +43,7 @@ LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseViewportPredictorOptions, (
                                         GravitationalPredictorOptions,
                                         LinearPredictorOptions,
                                         NavGraphPredictorOptions,
+                                        OfflinePredictorOptions,
                                         StaticPredictorOptions
                                     ))
 

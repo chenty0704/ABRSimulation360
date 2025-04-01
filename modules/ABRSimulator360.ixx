@@ -15,6 +15,7 @@ import ABRSimulation360.ThroughputPredictors.EMAPredictor;
 import ABRSimulation360.ThroughputPredictors.IThroughputPredictor;
 import ABRSimulation360.ThroughputPredictors.ThroughputPredictorFactory;
 import ABRSimulation360.ViewportPredictors.IViewportPredictor;
+import ABRSimulation360.ViewportPredictors.OfflinePredictor;
 import ABRSimulation360.ViewportPredictors.StaticPredictor;
 import ABRSimulation360.ViewportPredictors.ViewportPredictorFactory;
 import ABRSimulation360.ViewportSimulator;
@@ -85,6 +86,10 @@ public:
         const auto allocator = BitrateAllocatorFactory::Create(streamingConfig, allocatorOptions);
         NetworkSimulator networkSimulator(networkSeries);
         ViewportSimulator viewportSimulator(streamingConfig.ViewportConfig, streamingConfig.TilingCount);
+
+        // Initializes offline components.
+        if (auto *const _viewportPredictor = dynamic_cast<OfflinePredictor *>(viewportPredictor.get()))
+            _viewportPredictor->Initialize(viewportSeries);
 
         auto beginSegmentID = 0;
         auto secondsInSegment = 0.;
