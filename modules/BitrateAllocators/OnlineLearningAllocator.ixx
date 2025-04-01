@@ -17,13 +17,15 @@ export struct OnlineLearningAllocatorOptions : BaseBitrateAllocatorOptions {
     double InitialTrustLevel = 0.5; ///< The initial trust level in viewport predictions.
     double LearningRate = 0.5; ///< The learning rate for the trust level.
     pair<double, double> TrustLevelRange = {0., 0.95}; ///< The clipping range of the trust level.
+    filesystem::path LogPath; ///< The path to log trust levels.
 };
 
 export {
     DESCRIBE_STRUCT(OnlineLearningAllocatorOptions, (BaseBitrateAllocatorOptions), (
                         InitialTrustLevel,
                         LearningRate,
-                        TrustLevelRange
+                        TrustLevelRange,
+                        LogPath
                     ))
 }
 
@@ -32,6 +34,7 @@ export class OnlineLearningAllocator : public BaseBitrateAllocator {
     double _trustLevel;
     double _learningRate;
     double _minTrustLevel, _maxTrustLevel;
+    ofstream _logStream;
 
     double _prevAggregateBitrateMbps = 0.;
     vector<double> _prevPredictedDistribution;
@@ -46,6 +49,7 @@ public:
         BaseBitrateAllocator(streamingConfig, options), _trustLevel(options.InitialTrustLevel),
         _learningRate(options.LearningRate), _minTrustLevel(options.TrustLevelRange.first),
         _maxTrustLevel(options.TrustLevelRange.second) {
+        if (!options.LogPath.empty()) _logStream.open(options.LogPath);
     }
 
     [[nodiscard]] vector<int> GetBitrateIDs(const BitrateAllocatorContext &context) override {
@@ -64,6 +68,7 @@ public:
             const auto derivative = Math::Dot(dByPrevBitratesMbps, dPrevBitratesMbps);
             _trustLevel = clamp(_trustLevel + _learningRate * derivative, _minTrustLevel, _maxTrustLevel);
         }
+        if (_logStream.is_open()) println(_logStream, "{}", _trustLevel);
 
         _prevAggregateBitrateMbps = aggregateBitrateMbps;
         _prevPredictedDistribution = vector(from_range, predictedDistribution);
