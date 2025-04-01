@@ -42,6 +42,7 @@ target_sources(BitrateAllocators PUBLIC FILE_SET CXX_MODULES FILES
         "BitrateAllocators/BitrateAllocatorFactory.ixx"
         "BitrateAllocators/BOLAAllocator.ixx"
         "BitrateAllocators/DragonflyAllocator.ixx"
+        "BitrateAllocators/FlareAllocator.ixx"
         "BitrateAllocators/HybridAllocator.ixx"
         "BitrateAllocators/IBitrateAllocator.ixx"
         "BitrateAllocators/OnlineLearningAllocator.ixx")
