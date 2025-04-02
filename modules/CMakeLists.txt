@@ -32,6 +32,7 @@ add_library(AggregateControllers)
 target_sources(AggregateControllers PUBLIC FILE_SET CXX_MODULES FILES
         "AggregateControllers/AggregateControllerFactory.ixx"
         "AggregateControllers/IAggregateController.ixx"
+        "AggregateControllers/ModelPredictiveController.ixx"
         "AggregateControllers/ThroughputBasedController.ixx")
 target_link_libraries(AggregateControllers PUBLIC
         System::System

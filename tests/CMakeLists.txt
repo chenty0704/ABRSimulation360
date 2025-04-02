@@ -11,6 +11,12 @@ target_link_libraries(ViewportPredictorsTest PRIVATE
         GTest::gtest_main
         ViewportPredictors)
 
+add_executable(AggregateControllersTest
+        "AggregateControllers/ModelPredictiveControllerTest.cpp")
+target_link_libraries(AggregateControllersTest PRIVATE
+        GTest::gtest_main
+        AggregateControllers)
+
 add_executable(BitrateAllocatorsTest
         "BitrateAllocators/BOLAAllocatorTest.cpp"
         "BitrateAllocators/HybridAllocatorTest.cpp"

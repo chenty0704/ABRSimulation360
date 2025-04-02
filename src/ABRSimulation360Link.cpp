@@ -10,6 +10,7 @@ import System.MDArray;
 
 import ABRSimulation360.ABRSimulator360;
 import ABRSimulation360.AggregateControllers.IAggregateController;
+import ABRSimulation360.AggregateControllers.ModelPredictiveController;
 import ABRSimulation360.AggregateControllers.ThroughputBasedController;
 import ABRSimulation360.Base;
 import ABRSimulation360.BitrateAllocators.BOLAAllocator;
@@ -51,6 +52,7 @@ LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseViewportPredictorOptions, (
                                     ))
 
 LLU_GENERATE_ABSTRACT_STRUCT_GETTER(BaseAggregateControllerOptions, (
+                                        ModelPredictiveControllerOptions,
                                         ThroughputBasedControllerOptions
                                     ))
 

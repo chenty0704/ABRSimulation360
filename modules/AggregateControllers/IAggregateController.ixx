@@ -5,6 +5,7 @@ module;
 export module ABRSimulation360.AggregateControllers.IAggregateController;
 
 import System.Base;
+import System.Math;
 
 import ABRSimulation360.Base;
 
@@ -44,12 +45,26 @@ public:
 export class BaseAggregateController : public IAggregateController {
 protected:
     double _segmentSeconds;
+    vector<double> _bitratesMbps;
     double _maxBufferSeconds;
     double _throughputDiscount;
+
+    vector<double> _utilities;
 
     explicit BaseAggregateController(const StreamingConfig &streamingConfig,
                                      const BaseAggregateControllerOptions &options = {}) :
         _segmentSeconds(streamingConfig.SegmentSeconds), _maxBufferSeconds(streamingConfig.MaxBufferSeconds),
         _throughputDiscount(options.ThroughputDiscount) {
+        const auto bitratesPerFaceMbps = streamingConfig.BitratesPerFaceMbps;
+        _bitratesMbps.resize(bitratesPerFaceMbps.size() * 2 - 1);
+        for (auto i = 0; i < bitratesPerFaceMbps.size(); ++i) _bitratesMbps[2 * i] = bitratesPerFaceMbps[i] * 6;
+        for (auto i = 0; i < bitratesPerFaceMbps.size() - 1; ++i)
+            _bitratesMbps[2 * i + 1] = Math::Sqrt(_bitratesMbps[2 * i] * _bitratesMbps[2 * (i + 1)]);
+
+        const auto minBitrateMbps = _bitratesMbps.front(), maxBitrateMbps = _bitratesMbps.back();
+        const auto utilityNormalizer = Math::Log(maxBitrateMbps / minBitrateMbps);
+        _utilities = _bitratesMbps | views::transform([&](double bitrateMbps) {
+            return Math::Log(bitrateMbps / minBitrateMbps) / utilityNormalizer;
+        }) | ranges::to<vector>();
     }
 };

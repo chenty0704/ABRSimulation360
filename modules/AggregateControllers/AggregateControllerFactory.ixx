@@ -7,6 +7,7 @@ export module ABRSimulation360.AggregateControllers.AggregateControllerFactory;
 import System.Base;
 
 import ABRSimulation360.AggregateControllers.IAggregateController;
+import ABRSimulation360.AggregateControllers.ModelPredictiveController;
 import ABRSimulation360.AggregateControllers.ThroughputBasedController;
 import ABRSimulation360.Base;
 
@@ -26,6 +27,7 @@ public:
     [[nodiscard]] static unique_ptr<IAggregateController> Create(const StreamingConfig &streamingConfig,
                                                                  const BaseAggregateControllerOptions &options) {
         FOR_EACH(TRY_CREATE, (
+                     ModelPredictiveController,
                      ThroughputBasedController
                  ))
         throw runtime_error("Unknown aggregate controller options.");
