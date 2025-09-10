@@ -26,6 +26,8 @@ export {
 
 /// A BOLA allocator decides bitrates based on buffer level thresholds.
 export class BOLAAllocator : public BaseBitrateAllocator {
+    double _segmentSeconds;
+    double _maxBufferSeconds;
     double _bufferWeight;
     double _controlFactor;
 
@@ -34,7 +36,8 @@ public:
     /// @param streamingConfig The adaptive bitrate streaming configuration.
     /// @param options The options for the BOLA allocator.
     explicit BOLAAllocator(const StreamingConfig &streamingConfig, const BOLAAllocatorOptions &options = {}) :
-        BaseBitrateAllocator(streamingConfig, options), _bufferWeight(options.BufferWeight),
+        BaseBitrateAllocator(streamingConfig, options), _segmentSeconds(streamingConfig.SegmentSeconds),
+        _maxBufferSeconds(streamingConfig.MaxBufferSeconds), _bufferWeight(options.BufferWeight),
         _controlFactor((_maxBufferSeconds / _segmentSeconds - 1) / (_bufferWeight + 1)) {
     }
 

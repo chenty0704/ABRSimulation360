@@ -15,7 +15,7 @@ using namespace std;
 export struct ModelPredictiveControllerOptions : BaseAggregateControllerOptions {
     int WindowLength = 4; ///< The number of segments in the optimization window.
     double TargetBufferRatio = 0.6; ///< The target buffer level (normalized by the maximum buffer level).
-    double BufferCostWeight = 0.75; ///< The weight of buffer cost.
+    double BufferCostWeight = 1.; ///< The weight of buffer cost.
 };
 
 export {

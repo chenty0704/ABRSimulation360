@@ -13,8 +13,8 @@ using namespace std;
 
 /// Represents the options for an exponential moving average predictor.
 export struct EMAPredictorOptions : BaseThroughputPredictorOptions {
-    double SlowHalfLifeSeconds = 8.; ///< The slow half life in seconds.
-    double FastHalfLifeSeconds = 2.; ///< The fast half life in seconds.
+    double SlowHalfLifeSeconds = 8.; ///< The slow half-life in seconds.
+    double FastHalfLifeSeconds = 2.; ///< The fast half-life in seconds.
 };
 
 export {

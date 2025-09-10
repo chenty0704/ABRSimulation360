@@ -1,5 +1,7 @@
 module;
 
+#pragma warning(disable: 4275)
+
 #define XMGLOBALCONST inline const
 
 #include <directxtk12/SimpleMath.h>

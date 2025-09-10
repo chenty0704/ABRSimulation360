@@ -9,7 +9,11 @@ import ABRSimulation360.Base;
 using namespace std;
 
 TEST(ModelPredictiveControllerTest, BasicControl) {
-    const StreamingConfig streamingConfig = {1., {1., 2., 4., 8.}, 1, {60., 1.}, 5.};
+    const StreamingConfig streamingConfig = {
+        .SegmentSeconds = 1.,
+        .BitratesPerFaceMbps = {1., 2., 4., 8.},
+        .MaxBufferSeconds = 5.
+    };
     ModelPredictiveController controller(streamingConfig);
 
     AggregateControllerContext context;
@@ -18,7 +22,7 @@ TEST(ModelPredictiveControllerTest, BasicControl) {
     EXPECT_DOUBLE_EQ(controller.GetAggregateBitrateMbps(context), 6.);
 
     context.ThroughputMbps = 15.;
-    EXPECT_NEAR(controller.GetAggregateBitrateMbps(context), 8.5, 0.05);
+    EXPECT_DOUBLE_EQ(controller.GetAggregateBitrateMbps(context), 6.);
 
     context.ThroughputMbps = 25.;
     EXPECT_DOUBLE_EQ(controller.GetAggregateBitrateMbps(context), 12.);

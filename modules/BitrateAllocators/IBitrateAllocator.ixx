@@ -47,15 +47,11 @@ public:
 /// Provides a skeletal implementation of a bitrate allocator.
 export class BaseBitrateAllocator : public IBitrateAllocator {
 protected:
-    double _segmentSeconds;
     int _tileCount;
     vector<double> _bitratesMbps;
-    double _maxBufferSeconds;
-
     vector<double> _utilities;
 
-    explicit BaseBitrateAllocator(const StreamingConfig &streamingConfig, const BaseBitrateAllocatorOptions & = {}) :
-        _segmentSeconds(streamingConfig.SegmentSeconds), _maxBufferSeconds(streamingConfig.MaxBufferSeconds) {
+    explicit BaseBitrateAllocator(const StreamingConfig &streamingConfig, const BaseBitrateAllocatorOptions & = {}) {
         const auto tileCountPerFace = streamingConfig.TilingCount * streamingConfig.TilingCount;
         _tileCount = tileCountPerFace * 6;
         _bitratesMbps = streamingConfig.BitratesPerFaceMbps / tileCountPerFace;

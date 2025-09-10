@@ -46,10 +46,9 @@ export class BaseAggregateController : public IAggregateController {
 protected:
     double _segmentSeconds;
     vector<double> _bitratesMbps;
+    vector<double> _utilities;
     double _maxBufferSeconds;
     double _throughputDiscount;
-
-    vector<double> _utilities;
 
     explicit BaseAggregateController(const StreamingConfig &streamingConfig,
                                      const BaseAggregateControllerOptions &options = {}) :

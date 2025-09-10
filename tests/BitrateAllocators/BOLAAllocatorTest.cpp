@@ -9,7 +9,12 @@ import ABRSimulation360.BitrateAllocators.IBitrateAllocator;
 using namespace std;
 
 TEST(BOLAAllocatorTest, BasicAllocation) {
-    const StreamingConfig streamingConfig = {1., {1., 2., 4., 8.}, 1, {60., 1.}, 5.};
+    const StreamingConfig streamingConfig = {
+        .SegmentSeconds = 1.,
+        .BitratesPerFaceMbps = {1., 2., 4., 8.},
+        .TilingCount = 1,
+        .MaxBufferSeconds = 5.
+    };
     const vector distribution = {1., 0., 0., 0., 0., 0.};
     BOLAAllocator allocator(streamingConfig);
 

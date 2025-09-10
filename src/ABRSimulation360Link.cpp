@@ -1,3 +1,6 @@
+// ReSharper disable CppDoxygenUndocumentedParameter
+// ReSharper disable CppDoxygenUnresolvedReference
+
 #include <LibraryLinkUtilities/Macros.h>
 
 import LibraryLinkUtilities.Base;

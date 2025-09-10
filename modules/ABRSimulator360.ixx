@@ -89,7 +89,7 @@ public:
         const auto controller = AggregateControllerFactory::Create(streamingConfig, controllerOptions);
         const auto allocator = BitrateAllocatorFactory::Create(streamingConfig, allocatorOptions);
         NetworkSimulator networkSimulator(networkSeries);
-        ViewportSimulator viewportSimulator(streamingConfig.ViewportConfig, streamingConfig.TilingCount);
+        ViewportSimulator viewportSimulator(viewportConfig, tilingCount);
 
         // Initializes offline components.
         if (auto *const _viewportPredictor = dynamic_cast<OfflinePredictor *>(viewportPredictor.get()))
@@ -146,7 +146,7 @@ public:
             const auto positions = viewportPredictor->PredictPositions(bufferSeconds, segmentSeconds);
             const auto distribution = viewportSimulator.ToDistribution(positions);
             ranges::copy(distribution, &out.PredictedViewportDistributions[endSegmentID - 1, 0]);
-            const span<const double> prevDistribution(&out.ViewportDistributions[endSegmentID - 1, 0], tileCount);
+            const span prevDistribution(&out.ViewportDistributions[endSegmentID - 1, 0], tileCount);
             const auto DilatedDistribution = [&](double dilation) {
                 const auto dilatedFovDegrees = (1 - dilation) * viewportConfig.FoVDegrees + dilation * 180;
                 ViewportSimulator _viewportSimulator({dilatedFovDegrees, viewportConfig.AspectRatio}, tilingCount);

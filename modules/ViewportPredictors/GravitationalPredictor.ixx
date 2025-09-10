@@ -17,7 +17,7 @@ using namespace experimental;
 
 /// Represents the options for a gravitational predictor.
 export struct GravitationalPredictorOptions : BaseViewportPredictorOptions {
-    double SmoothingHalfLifeSeconds = 0.5; ///< The half life for velocity smoothing in seconds.
+    double SmoothingHalfLifeSeconds = 0.5; ///< The half-life for velocity smoothing in seconds.
     double GravitationalSpeedDps = 90.; ///< The speed induced by gravity in degrees / second.
     double GravitationalFieldRangeDegrees = 45.; ///< The range of gravitational fields in degrees.
     filesystem::path ClusterDataPath; ///< The path to the cluster data.

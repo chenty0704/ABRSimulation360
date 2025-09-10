@@ -9,7 +9,7 @@ import ABRSimulation360.BitrateAllocators.OnlineLearningAllocator;
 using namespace std;
 
 TEST(OnlineLearningAllocatorTest, BasicAllocation) {
-    const StreamingConfig streamingConfig = {1., {1., 2., 4., 8.}, 1, {60., 1.}, 5.};
+    const StreamingConfig streamingConfig = {.BitratesPerFaceMbps = {1., 2., 4., 8.}, .TilingCount = 1};
     const vector predictedDistribution = {1., 0., 0., 0., 0., 0.};
     OnlineLearningAllocatorOptions options;
     options.InitialTrustLevel = 0.;
