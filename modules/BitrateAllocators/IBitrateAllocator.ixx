@@ -63,30 +63,16 @@ protected:
         }) | ranges::to<vector>();
     }
 
-    [[nodiscard]] vector<int> FromViewportDistribution(double aggregateBitrateMbps,
-                                                       span<const double> distribution) const {
-        vector bitrateIDs(_tileCount, 0);
-        auto totalBitrateMbps = _bitratesMbps.front() * _tileCount;
-        auto derivatives = views::iota(0, _tileCount) | views::transform([&](int tileID) {
-            return ExpectedUtilityDerivative(bitrateIDs[tileID], distribution[tileID]);
-        }) | ranges::to<vector>();
-        while (true) {
-            const auto tileID = static_cast<int>(ranges::max_element(derivatives) - derivatives.cbegin());
-            if (derivatives[tileID] == 0.) break;
-
-            totalBitrateMbps += _bitratesMbps[bitrateIDs[tileID] + 1] - _bitratesMbps[bitrateIDs[tileID]];
-            if (totalBitrateMbps > aggregateBitrateMbps) break;
-
-            derivatives[tileID] = ExpectedUtilityDerivative(++bitrateIDs[tileID], distribution[tileID]);
-        }
-        return bitrateIDs;
+    [[nodiscard]] int BitrateIDBelow(double bitrateMbps) const {
+        const auto it = ranges::upper_bound(_bitratesMbps, bitrateMbps);
+        return it != _bitratesMbps.cbegin() ? static_cast<int>(it - _bitratesMbps.cbegin()) - 1 : 0;
     }
 
-    [[nodiscard]] double ExpectedUtilityDerivative(int bitrateID, double probability) const {
-        if (bitrateID == _bitratesMbps.size() - 1) return 0.;
-
-        const auto expectedUtilityDiff = probability * (_utilities[bitrateID + 1] - _utilities[bitrateID]);
-        const auto bitrateDiffMbps = _bitratesMbps[bitrateID + 1] - _bitratesMbps[bitrateID];
-        return expectedUtilityDiff / bitrateDiffMbps;
+    [[nodiscard]] vector<int> FromViewportDistribution(double aggregateBitrateMbps,
+                                                       span<const double> distribution) const {
+        const auto bitratesMbps = distribution * aggregateBitrateMbps;
+        return bitratesMbps | views::transform([&](double bitrateMbps) {
+            return BitrateIDBelow(bitrateMbps);
+        }) | ranges::to<vector>();
     }
 };

@@ -20,7 +20,7 @@ TEST(HybridAllocatorTest, BasicAllocation) {
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({0, 0, 0, 0, 0, 0}));
 
     context.AggregateBitrateMbps = 15.;
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 1, 1, 1, 1, 1}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({1, 1, 1, 1, 1, 1}));
 
     context.AggregateBitrateMbps = 25.;
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 2, 2, 2, 2, 2}));
@@ -28,18 +28,18 @@ TEST(HybridAllocatorTest, BasicAllocation) {
     options.TrustLevel = 0.5;
     allocator = HybridAllocator(streamingConfig, options);
     context.AggregateBitrateMbps = 5.;
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({0, 0, 0, 0, 0, 0}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({1, 0, 0, 0, 0, 0}));
 
     context.AggregateBitrateMbps = 15.;
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 1, 1, 0, 0, 0}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 0, 0, 0, 0, 0}));
 
     context.AggregateBitrateMbps = 25.;
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 2, 2, 2, 1, 1}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 1, 1, 1, 1, 1}));
 
     options.TrustLevel = 1.;
     allocator = HybridAllocator(streamingConfig, options);
     context.AggregateBitrateMbps = 5.;
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({0, 0, 0, 0, 0, 0}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 0, 0, 0, 0, 0}));
 
     context.AggregateBitrateMbps = 15.;
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({3, 0, 0, 0, 0, 0}));

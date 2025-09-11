@@ -31,9 +31,9 @@ TEST(ABRSimulator360Test, BasicSimulation) {
     EXPECT_DOUBLE_EQ(rebufferingSeconds, 0.);
     EXPECT_EQ(bufferedBitratesMbps.container(), vector({
                   1., 1., 1., 1., 1., 1.,
-                  1., 1., 1., 1., 1., 2.,
                   1., 1., 1., 1., 1., 4.,
-                  2., 2., 1., 1., 1., 8.}));
+                  1., 1., 1., 1., 1., 4.,
+                  1., 1., 1., 1., 1., 8.}));
     EXPECT_EQ(distributions.container(), vector({
                   0., 0., 0., 0., 0., 1.,
                   0., 0., 0., 0., 0., 1.,
