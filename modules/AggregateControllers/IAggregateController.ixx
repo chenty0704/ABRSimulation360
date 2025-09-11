@@ -45,8 +45,6 @@ public:
 export class BaseAggregateController : public IAggregateController {
 protected:
     double _segmentSeconds;
-    vector<double> _bitratesMbps;
-    vector<double> _utilities;
     double _maxBufferSeconds;
     double _throughputDiscount;
 
@@ -54,6 +52,18 @@ protected:
                                      const BaseAggregateControllerOptions &options = {}) :
         _segmentSeconds(streamingConfig.SegmentSeconds), _maxBufferSeconds(streamingConfig.MaxBufferSeconds),
         _throughputDiscount(options.ThroughputDiscount) {
+    }
+};
+
+/// Provides a skeletal implementation of a discrete aggregate controller.
+export class BaseDiscreteAggregateController : public BaseAggregateController {
+protected:
+    vector<double> _bitratesMbps;
+    vector<double> _utilities;
+
+    explicit BaseDiscreteAggregateController(const StreamingConfig &streamingConfig,
+                                             const BaseAggregateControllerOptions &options = {}) :
+        BaseAggregateController(streamingConfig, options) {
         const auto bitratesPerFaceMbps = streamingConfig.BitratesPerFaceMbps;
         _bitratesMbps.resize(bitratesPerFaceMbps.size() * 2 - 1);
         for (auto i = 0; i < bitratesPerFaceMbps.size(); ++i) _bitratesMbps[2 * i] = bitratesPerFaceMbps[i] * 6;

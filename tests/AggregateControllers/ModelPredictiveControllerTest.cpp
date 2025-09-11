@@ -14,7 +14,9 @@ TEST(ModelPredictiveControllerTest, BasicControl) {
         .BitratesPerFaceMbps = {1., 2., 4., 8.},
         .MaxBufferSeconds = 5.
     };
-    ModelPredictiveController controller(streamingConfig);
+    ModelPredictiveControllerOptions options;
+    options.SwitchingCostWeight = 0.;
+    ModelPredictiveController controller(streamingConfig, options);
 
     AggregateControllerContext context;
     context.BufferSeconds = 2.;
