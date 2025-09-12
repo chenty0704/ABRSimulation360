@@ -3,3 +3,5 @@ target_link_libraries(ABRSimulation360Link PRIVATE
         LibraryLinkUtilities::LibraryLinkUtilities
         System::System
         ABRSimulation360)
+
+install(TARGETS ABRSimulation360Link)
