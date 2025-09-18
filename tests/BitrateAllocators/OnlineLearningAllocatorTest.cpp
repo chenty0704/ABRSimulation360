@@ -25,6 +25,6 @@ TEST(OnlineLearningAllocatorTest, BasicAllocation) {
 
     prevDistribution = {0., 1., 0., 0., 0., 0.};
     context.PrevViewportDistribution = prevDistribution;
-    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({2, 0, 0, 0, 0, 0}));
+    EXPECT_EQ(allocator.GetBitrateIDs(context), vector({1, 1, 1, 1, 1, 1}));
     EXPECT_EQ(allocator.GetBitrateIDs(context), vector({1, 1, 1, 1, 1, 1}));
 }

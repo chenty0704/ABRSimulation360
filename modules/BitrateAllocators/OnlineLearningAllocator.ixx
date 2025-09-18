@@ -15,7 +15,7 @@ using namespace std;
 /// Represents the options for an online learning allocator.
 export struct OnlineLearningAllocatorOptions : BaseBitrateAllocatorOptions {
     double InitialTrustLevel = 0.5; ///< The initial trust level in viewport predictions.
-    double LearningRate = 0.5; ///< The learning rate for the trust level.
+    double LearningRate = 0.2; ///< The learning rate for the trust level.
     pair<double, double> TrustLevelRange = {0., 0.95}; ///< The clipping range of the trust level.
     filesystem::path LogPath; ///< The path to log trust levels.
 };
@@ -36,9 +36,8 @@ export class OnlineLearningAllocator : public BaseBitrateAllocator {
     double _minTrustLevel, _maxTrustLevel;
     ofstream _logStream;
 
-    double _prevAggregateBitrateMbps = 0.;
     vector<double> _prevPredictedDistribution;
-    vector<int> _prevBitrateIDs;
+    vector<double> _prevMixedDistribution;
 
 public:
     /// Creates an online learning allocator with the specified configuration and options.
@@ -53,28 +52,22 @@ public:
     }
 
     [[nodiscard]] vector<int> GetBitrateIDs(const BitrateAllocatorContext &context) override {
-        const auto minBitrateMbps = _bitratesMbps.front(), maxBitrateMbps = _bitratesMbps.back();
         const auto aggregateBitrateMbps = context.AggregateBitrateMbps;
         const auto predictedDistribution = context.ViewportDistribution;
         const auto prevDistribution = context.PrevViewportDistribution;
 
-        if (!_prevBitrateIDs.empty()) {
-            const auto utilityNormalizer = Math::Log(maxBitrateMbps / minBitrateMbps);
+        if (!_prevMixedDistribution.empty()) {
             const auto dPrevMixedDistribution = _prevPredictedDistribution - 1. / _tileCount;
-            const auto dPrevBitratesMbps = dPrevMixedDistribution * _prevAggregateBitrateMbps;
-            const auto dByPrevBitratesMbps = views::iota(0, _tileCount) | views::transform([&](int tileID) {
-                return prevDistribution[tileID] / (_bitratesMbps[_prevBitrateIDs[tileID]] * utilityNormalizer);
-            }) | ranges::to<vector>();
-            const auto derivative = Math::Dot(dByPrevBitratesMbps, dPrevBitratesMbps);
+            const auto dByPrevMixedDistribution = prevDistribution / _prevMixedDistribution;
+            const auto derivative = Math::Dot(dByPrevMixedDistribution, dPrevMixedDistribution);
             _trustLevel = clamp(_trustLevel + _learningRate * derivative, _minTrustLevel, _maxTrustLevel);
         }
         if (_logStream.is_open()) println(_logStream, "{}", _trustLevel);
 
-        _prevAggregateBitrateMbps = aggregateBitrateMbps;
         _prevPredictedDistribution = vector(from_range, predictedDistribution);
         const auto mixedDistribution = views::iota(0, _tileCount) | views::transform([&](int tileID) {
             return predictedDistribution[tileID] * _trustLevel + (1 - _trustLevel) / _tileCount;
         }) | ranges::to<vector>();
-        return _prevBitrateIDs = FromViewportDistribution(aggregateBitrateMbps, mixedDistribution);
+        return FromViewportDistribution(aggregateBitrateMbps, _prevMixedDistribution = mixedDistribution);
     }
 };
