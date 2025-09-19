@@ -19,6 +19,7 @@ target_link_libraries(AggregateControllersTest PRIVATE
 
 add_executable(BitrateAllocatorsTest
         "BitrateAllocators/BOLAAllocatorTest.cpp"
+        "BitrateAllocators/FlareAllocatorTest.cpp"
         "BitrateAllocators/HybridAllocatorTest.cpp"
         "BitrateAllocators/OnlineLearningAllocatorTest.cpp")
 target_link_libraries(BitrateAllocatorsTest PRIVATE
