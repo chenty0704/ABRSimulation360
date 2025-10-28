@@ -29,6 +29,7 @@ export struct SimulationSeriesRef {
     mdspan<double, dims<2>> BufferedBitratesMbps; ///< A 2D array of buffered bitrates in megabits per second.
     mdspan<double, dims<2>> ViewportDistributions; ///< A list of viewport distributions.
     mdspan<double, dims<2>> PredictedViewportDistributions; ///< A list of predicted viewport distributions.
+    span<double> AllocationUs; ///< A list of allocation time in microseconds.
 };
 
 /// Refers to a collection of simulation series.
@@ -37,6 +38,7 @@ export struct SimulationDataRef {
     mdspan<double, dims<3>> BufferedBitratesMbps; ///< A 3D array of buffered bitrates in megabits per second.
     mdspan<double, dims<3>> ViewportDistributions; ///< A 2D array of viewport distributions.
     mdspan<double, dims<3>> PredictedViewportDistributions; ///< A 2D array of predicted viewport distributions.
+    mdspan<double, dims<2>> AllocationUs; ///< A 2D array of allocation time in microseconds.
 
     /// Returns the path at the specified index.
     /// @param index The index of the path.
@@ -45,7 +47,8 @@ export struct SimulationDataRef {
         const auto bitratesMbps = submdspan(BufferedBitratesMbps, index, full_extent, full_extent);
         const auto distributions = submdspan(ViewportDistributions, index, full_extent, full_extent);
         const auto predictedDistribution = submdspan(PredictedViewportDistributions, index, full_extent, full_extent);
-        return {RebufferingSeconds[index], bitratesMbps, distributions, predictedDistribution};
+        const span allocationUs(&AllocationUs[index, 0], AllocationUs.extent(1));
+        return {RebufferingSeconds[index], bitratesMbps, distributions, predictedDistribution, allocationUs};
     }
 };
 
@@ -154,7 +157,9 @@ public:
             };
             const BitrateAllocatorContext allocatorContext =
                 {aggregateBitrateMbps, bufferSeconds, distribution, prevDistribution, DilatedDistribution};
-            const auto bitrateIDs = allocator->GetBitrateIDs(allocatorContext);
+            const auto [bitrateIDs, allocationTime] =
+                MeasureTimedValue([&] { return allocator->GetBitrateIDs(allocatorContext); });
+            out.AllocationUs[endSegmentID - 1] = chrono::duration<double, micro>(allocationTime).count();
 
             const auto downloadSeconds = DownloadSegment(endSegmentID, bitrateIDs).Seconds;
             if (downloadSeconds <= bufferSeconds) PlayVideo(downloadSeconds);
